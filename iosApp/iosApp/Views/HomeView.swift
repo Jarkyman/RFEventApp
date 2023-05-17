@@ -13,6 +13,7 @@ import FirebaseDatabase
 struct HomeView: View {
 	var dbRef = Database.database().reference()
 	@EnvironmentObject var viewModel: EventViewModel
+	@State var searchShow = false
 	
 	var body: some View {
 			ZStack {
@@ -21,11 +22,27 @@ struct HomeView: View {
 					VStack(alignment: .leading) {
 						switch viewModel.popularState {
 						case .loaded(let events):
-							Text("Populær")
-								.foregroundColor(Color.textColor)
-								.fontWeight(.bold)
-								.font(.system(size: 24))
-								.padding(.leading, 16)
+							HStack {
+								Text("Populær")
+									.foregroundColor(Color.textColor)
+									.fontWeight(.bold)
+									.font(.system(size: 24))
+									.padding(.leading, 16)
+								Spacer()
+								NavigationLink(destination: EventSearchView(), isActive: $searchShow) {
+								  Image(systemName: "magnifyingglass")
+									.foregroundColor(.white)
+									.padding()
+									.background(Color.defaultGray.opacity(0.75))
+									.clipShape(Circle())
+									.onTapGesture {
+										searchShow = true
+									}
+								}
+
+							}
+							.padding(.trailing)
+							
 							ScrollView(.horizontal) {
 								LazyHStack(alignment: .top ,spacing: 20) {
 									ForEach(events, id: \.id) { event in
@@ -296,5 +313,6 @@ struct HomeView: View {
 struct HomeView_Previews: PreviewProvider {
 	static var previews: some View {
 		HomeView()
+			.environmentObject(EventViewModel())
 	}
 }

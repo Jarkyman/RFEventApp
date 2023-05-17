@@ -26,6 +26,7 @@ class EventViewModel: ObservableObject {
 	@Published private(set) var upcommingState = State.idle
 	@Published private(set) var calenderState = State.idle
 	@Published private(set) var myEventsState = State.idle
+	@Published private(set) var eventSearchState = State.idle
 	@Published private(set) var isSubscribe = false
 	
 	init() {
@@ -254,6 +255,49 @@ class EventViewModel: ObservableObject {
 				 "createdAt": event.createdAt,
 				 "updatedAt": event.updatedAt])
 			isSubscribe = !isSubscribe
+		}
+	}
+	
+	func searchEvents(keyword: String) {
+		
+		dbRef.child("events").queryOrdered(byChild: "title").queryStarting(atValue: keyword).queryEnding(atValue: keyword + "\u{f8ff}").observe(.value, with: { snapshot in
+			self.eventSearchState = State.loading
+			var searchedEvents: [Event] = []
+			for child in snapshot.children.allObjects as! [DataSnapshot] {
+				if let userData = child.value as? [String: Any] {
+					
+					let id = userData["id"] as? String ?? ""
+					let userId = userData["userId"] as? String ?? ""
+					let title = userData["title"] as? String ?? ""
+					let description = userData["description"] as? String ?? ""
+					let dayTime = userData["dayTime"] as? String ?? ""
+					let campName = userData["campName"] as? String ?? ""
+					let image = userData["image"] as? String ?? ""
+					let location = userData["location"] as? String ?? ""
+					let participant = userData["participant"] as? Int32 ?? 999
+					let facebookLink = userData["facebookLink"] as? String ?? ""
+					let timestamp = userData["timestamp"] as? Int64 ?? 0
+					let createdAt = userData["createdAt"] as? String ?? ""
+					let updatedAt = userData["updatedAt"] as? String ?? ""
+					
+					// create new event object
+					let event = Event(id: id, userId: userId, title: title, campName: campName, description: description, image: image, dayTime: dayTime, location: location, participant: participant, timestamp: timestamp, createdAt: createdAt, updatedAt: updatedAt, facebookLink: facebookLink)
+					
+					// use the event object as needed
+					searchedEvents.append(event)
+					print("Event is set: " + event.title + " " + event.dayTime)
+				}
+			}
+			if (!searchedEvents.isEmpty) {
+				self.eventSearchState = State.loaded(searchedEvents)
+			}else {
+				self.eventSearchState = State.empty
+			}
+			print("load done")
+		}){ (error) in
+			//TODO: Error handeling
+			print("Der var en fejl")
+			self.eventSearchState = State.failed(error)
 		}
 	}
 	

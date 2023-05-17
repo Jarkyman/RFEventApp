@@ -19,7 +19,27 @@ struct ProfileView: View {
 				Background()
 				VStack() {
 					WelcomeMsg(name: userViewModel.loggedInUser == nil ? "" : userViewModel.loggedInUser!.firstName + " " + userViewModel.loggedInUser!.lastName)
-					InfoField(description: "Email", info: userViewModel.loggedInUser?.email ?? "Error")
+					HStack() {
+						InfoField(description: "Email", info: userViewModel.loggedInUser?.email ?? "Error")
+						if (!Auth.auth().currentUser!.isEmailVerified) { Image(systemName: "exclamationmark.circle")
+								.resizable()
+								.foregroundColor(Color.yellow)
+								.frame(width: 32, height: 32)
+								.padding(.trailing, 10)
+						}
+					}
+					.onTapGesture {
+						if (!Auth.auth().currentUser!.isEmailVerified) {
+							Auth.auth().currentUser!.sendEmailVerification() { error in
+								if let error = error {
+										print(error.localizedDescription)
+									showMessagePrompt(error.localizedDescription)
+									} else {
+										showMessagePrompt("Der er sendt en email, hvor du kan verificer din email.\n\n (Husk at tjekke spam)")
+									}
+							}
+						}
+					}
 					InfoField(description: "Camp", info: userViewModel.loggedInUser == nil ? "No camp" : userViewModel.loggedInUser!.campName)
 					HStack {
 						Divider()
@@ -100,29 +120,36 @@ struct ProfileView: View {
 				Text("Begivenheder")
 					.foregroundColor(Color.defaultGray)
 					.font(.system(size: 14))
-				VStack(alignment: .leading, spacing: 16) {
-					NavigationLink(
-						destination: CreateEventView(event: nil),
-					isActive: $createShow) {
-						Text("Opret begivenhed")
-							.foregroundColor(Color.textColor)
-							.font(.system(size: 16))
-							.fontWeight(.bold)
-							.onTapGesture {
-								createShow = true
+				if (!Auth.auth().currentUser!.isEmailVerified) {
+					Text("Du skal valider din email for at kunne oprette begivenheder")
+						.foregroundColor(Color.textColor)
+						.fontWeight(.bold)
+						.font(.system(size: 16))
+				} else {
+					VStack(alignment: .leading, spacing: 16) {
+						NavigationLink(
+							destination: CreateEventView(event: nil),
+						isActive: $createShow) {
+							Text("Opret begivenhed")
+								.foregroundColor(Color.textColor)
+								.font(.system(size: 16))
+								.fontWeight(.bold)
+								.onTapGesture {
+									createShow = true
+								}
 							}
-						}
-					NavigationLink(
-						destination: MyEventsView(),
-					isActive: $myEventsShow) {
-						Text("Mine begivenheder")
-							.foregroundColor(Color.textColor)
-							.font(.system(size: 16))
-							.fontWeight(.bold)
-							.onTapGesture {
-								myEventsShow = true
+						NavigationLink(
+							destination: MyEventsView(),
+						isActive: $myEventsShow) {
+							Text("Mine begivenheder")
+								.foregroundColor(Color.textColor)
+								.font(.system(size: 16))
+								.fontWeight(.bold)
+								.onTapGesture {
+									myEventsShow = true
+								}
 							}
-						}
+					}
 				}
 			}
 			
@@ -271,6 +298,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
 	static var previews: some View {
-		ProfileView()
+		ProfileView().environmentObject(EventViewModel()).environmentObject(UserViewModel())
 	}
 }

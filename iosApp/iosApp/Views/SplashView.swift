@@ -39,6 +39,7 @@ struct SplashView: View {
 				}
 			}
 			.onAppear {
+				Auth.auth().languageCode = "da"
 				AppState.shared.swipeEnabled = false
 				DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
 					//TODO: Den skal vente på user er loaded og ikke 2.5 sek

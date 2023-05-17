@@ -130,5 +130,6 @@ struct EventBoxEdit: View {
 struct MyEventsView_Previews: PreviewProvider {
     static var previews: some View {
         MyEventsView()
+			.environmentObject(EventViewModel())
     }
 }
