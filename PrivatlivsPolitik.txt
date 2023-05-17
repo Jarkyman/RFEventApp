@@ -1,0 +1,29 @@
+Privatlivspolitik for RF Events
+
+Denne privatlivspolitik beskriver, hvordan RF Events indsamler, bruger og beskytter personlige oplysninger om brugerne af vores app i overensstemmelse med GDPR. RF Events respekterer dit privatliv og er forpligtet til at beskytte dine personlige oplysninger.
+
+Indsamling af personlige oplysninger
+RF Events indsamler personlige oplysninger, når du opretter en konto og opretter eller deltager i begivenheder. De personlige oplysninger, vi indsamler, kan omfatte dit navn, efternavn, fødselsdato og e-mailadresse.
+
+Brug af personlige oplysninger
+RF Events bruger kun dine personlige oplysninger til at oprette og administrere begivenheder i appen. Vi vil ikke bruge dine personlige oplysninger til markedsføring eller til at sende uønskede e-mails til dig.
+
+Beskyttelse af personlige oplysninger
+RF Events tager passende tekniske og organisatoriske foranstaltninger for at beskytte dine personlige oplysninger mod uautoriseret adgang, tab, ændring eller ødelæggelse. Vi vil ikke dele dine personlige oplysninger med tredjeparter uden dit samtykke, medmindre det kræves af lov.
+
+Overførsel af personlige oplysninger til tredjeparter
+RF Events kan overføre dine personlige oplysninger til tredjeparter, der leverer tjenester til os, såsom Google Firebase, der bruges til at opbevare dine oplysninger. Vi sikrer, at vores tredjepartsleverandører også overholder GDPR-reglerne.
+
+Opbevaring af personlige oplysninger
+RF Events opbevarer kun dine personlige oplysninger, så længe det er nødvendigt for at opfylde det formål, som de blev indsamlet til, eller så længe det kræves af lov.
+
+Rettigheder for registrerede brugere
+Som registreret bruger af RF Events-appen har du ret til at få adgang til, rette eller slette dine personlige oplysninger. Du har også ret til at trække dit samtykke tilbage til behandling af dine personlige oplysninger eller til at protestere mod behandlingen. Du kan også klage til en databeskyttelsesmyndighed.
+
+Opdateringer til privatlivspolitikken
+RF Events forbeholder sig ret til at opdatere denne privatlivspolitik fra tid til anden for at afspejle ændringer i vores praksis eller lovgivning. Vi opfordrer dig til at gennemgå denne privatlivspolitik regelmæssigt for at holde dig opdateret om, hvordan vi beskytter dine personlige oplysninger.
+
+Kontakt os
+Hvis du har spørgsmål eller bekymringer om vores behandling af dine personlige oplysninger, eller hvis du ønsker at udøve dine rettigheder som registreret bruger, kan du kontakte os på følgende e-mailadresse: [indsæt e-mailadresse for support].
+
+Denne privatlivspolitik er gældende fra 18/05/2023.
