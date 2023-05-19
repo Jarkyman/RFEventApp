@@ -27,6 +27,23 @@ struct EditProfileView: View {
 	
 	@State var SaveChanges = false
 	
+	var over16under120: ClosedRange<Date> {
+		let calendar = Calendar(identifier: .gregorian)
+		let currentDate = Date()
+		var components = DateComponents(timeZone: TimeZone(identifier: "Europe/Copenhagen")!)
+		components.calendar = calendar
+
+		components.year = -16
+		var maxDate = calendar.date(byAdding: components, to: currentDate)!
+		let end = maxDate
+		
+		components.year = -104
+		var minDate = calendar.date(byAdding: components, to: currentDate)!
+		var start = minDate
+		
+		return start...end
+	}
+	
 	var body: some View {
 		NavigationView {
 			ZStack(alignment: .top) {
@@ -91,6 +108,7 @@ struct EditProfileView: View {
 						DatePicker(
 							"",
 							selection: $birthday,
+							in: over16under120,
 							displayedComponents: [.date]
 						)
 						.labelsHidden()

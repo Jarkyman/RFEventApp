@@ -29,6 +29,23 @@ struct SignUpView: View {
 	
 	@State var SignUpShow = false
 	
+	var over16under120: ClosedRange<Date> {
+		let calendar = Calendar(identifier: .gregorian)
+		let currentDate = Date()
+		var components = DateComponents(timeZone: TimeZone(identifier: "Europe/Copenhagen")!)
+		components.calendar = calendar
+
+		components.year = -16
+		var maxDate = calendar.date(byAdding: components, to: currentDate)!
+		let end = maxDate
+		
+		components.year = -104
+		var minDate = calendar.date(byAdding: components, to: currentDate)!
+		var start = minDate
+		
+		return start...end
+	}
+	
 	var body: some View {
 		ZStack(alignment: .top) {
 			BackgroundWithPicture()
@@ -120,6 +137,7 @@ struct SignUpView: View {
 						DatePicker(
 							"",
 							selection: $birthday,
+							in: over16under120,
 							displayedComponents: [.date]
 						)
 						.labelsHidden()
@@ -179,7 +197,7 @@ struct SignUpView: View {
 							focusedInput = nil
 						}
 					
-					NavigationLink(
+					/*NavigationLink(
 						destination: SplashView(),
 						isActive: $SignUpShow,
 						label: {
@@ -199,7 +217,23 @@ struct SignUpView: View {
 									)
 									.cornerRadius(30.0)
 							}
-						})
+						})*/
+					Button(action: {
+						signupUser()
+					}) {
+						Text("Sign up")
+							.font(.system(size: 24, weight: .semibold))
+							.foregroundColor(.textColor)
+							.padding()
+							.frame(minWidth: 0,
+								   maxWidth: .infinity, minHeight: 60,
+								   maxHeight: 60)
+							.background(Color(
+								hex: 0xFFEE7203, opacity: 1
+							)
+							)
+							.cornerRadius(30.0)
+					}
 					
 				}
 				.padding(.horizontal, 30)
@@ -252,6 +286,8 @@ struct SignUpView: View {
 								// ...
 							}
 							
+							Auth.auth().currentUser?.sendEmailVerification()
+							
 							dbref.child("users").child(user.id).setValue(
 								["firstName": user.firstName,
 								 "lastName": user.lastName,
@@ -274,6 +310,7 @@ struct SignUpView: View {
 									hideSpinner {
 										print("success")
 										SignUpShow = true
+										self.dismiss()
 									}
 								}
 							}
