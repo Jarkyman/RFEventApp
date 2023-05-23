@@ -12,7 +12,7 @@ import FirebaseDatabase
 import FirebaseAuth
 
 class UserViewModel: ObservableObject {
-	let dbref = Database.database().reference()
+	let dbRef = Database.database().reference()
 	
 	@Published private(set) var loggedInUser: shared.User? = nil
 	
@@ -25,7 +25,7 @@ class UserViewModel: ObservableObject {
 				print("User is not authenticated")
 				return
 			}
-		dbref.child("users").child(userID).observe(.value) {snapshot in
+		dbRef.child("users").child(userID).observe(.value) {snapshot in
 			if let userData = snapshot.value as? [String: Any] {
 				let id = userData["id"] as? String ?? ""
 				let firstName = userData["firstName"] as? String ?? ""
@@ -46,4 +46,34 @@ class UserViewModel: ObservableObject {
 			}
 		}
 	}
+	
+	func deleteUser(id: String, completion: @escaping (Error?) -> Void) {
+		let oldUser = dbRef.child("users").child(id)
+		
+		oldUser.observeSingleEvent(of: .value, with: { snapshot in
+			guard snapshot.exists() else {
+				// Håndter fejl
+				let error = NSError(domain: "UserNotFound", code: 0, userInfo: [NSLocalizedDescriptionKey: "Brugeren blev ikke fundet"])
+				completion(error)
+				return
+			}
+			
+			let deletedData = snapshot.value as? [String: Any]
+			
+			let deletedUser = self.dbRef.child("users").child("Deleted\(id)")
+			deletedUser.setValue(deletedData) { error, _ in
+				if let error = error {
+					// Håndter fejl
+					print("FEJL SKER HER")
+					completion(error)
+					return
+				}
+				oldUser.removeValue { _, _ in
+					// Håndter fejl
+					completion(nil)
+				}
+			}
+		})
+	}
+
 }

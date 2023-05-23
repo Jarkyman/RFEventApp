@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +27,7 @@ import com.example.rfeventapp.android.ui.composable.background.Background
 import com.example.rfeventapp.usecase.loggedInUser
 import com.example.rfeventapp.utils.AppColor
 import com.example.rfeventapp.utils.Capitalizer
+import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -51,7 +53,22 @@ fun ProfileScreen(
             .padding(paddingValues)
     ) {
         WelcomeMsg(Capitalizer().capitalizeWords("${loggedInUser!!.firstName} ${loggedInUser!!.lastName}"))
-        InfoField(description = "E-mail", info = Capitalizer().capitalizeFirstLetter(loggedInUser!!.email))
+        Row(
+            //horizontalArrangement = Arrangement.SpaceBetween,
+            //modifier = Modifier.fillMaxWidth()
+        ) {
+            InfoField(description = "E-mail", info = Capitalizer().capitalizeFirstLetter(loggedInUser!!.email))
+            //if (FirebaseAuth.getInstance().currentUser?.isEmailVerified != true) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_warning),
+                    contentDescription = "Ikke verifiseret",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(end = 10.dp),
+                    //colorFilter = ColorFilter.tint(Color.Yellow)
+                )
+            //}
+        }
         InfoField(description = "Camp", info = Capitalizer().capitalizeWords(viewModel.campNameCheck(loggedInUser!!.campName)))
         Divider(
             startIndent = 12.dp,
@@ -69,27 +86,47 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "Begivenheder",
-                    color = Color(AppColor.gray),
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = "Opret begivenhed",
-                    color = Color(AppColor.textColor),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier.clickable(onClick = onCreateEventClick)
-                )
-                Text(
-                    text = "Mine begivenheder",
-                    color = Color(AppColor.textColor),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .clickable(onClick = onMyEventsClick)
-                )
+                if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) {
+                    Text(
+                        text = "Begivenheder",
+                        color = Color(AppColor.gray),
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = "Opret begivenhed",
+                        color = Color(AppColor.textColor),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.clickable(onClick = onCreateEventClick)
+                    )
+                    Text(
+                        text = "Mine begivenheder",
+                        color = Color(AppColor.textColor),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .clickable(onClick = onMyEventsClick)
+                    )
+            } else {
+                    Text(
+                        text = "Begivenheder",
+                        color = Color(AppColor.gray),
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = "Du skal verifiser din email for at kunne oprette begivenheder",
+                        color = Color(AppColor.textColor),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .clickable(onClick = {
+                                //Send email
+                            })
+                    )
+                }
+
             }
         }
         Divider(

@@ -253,7 +253,7 @@ class EventViewModel: ObservableObject {
 				 "participant": event.participant,
 				 "timestamp": event.timestamp,
 				 "createdAt": event.createdAt,
-				 "updatedAt": event.updatedAt])
+				 "updatedAt": event.updatedAt] as [String : Any])
 			isSubscribe = !isSubscribe
 		}
 	}
@@ -299,6 +299,10 @@ class EventViewModel: ObservableObject {
 			print("Der var en fejl")
 			self.eventSearchState = State.failed(error)
 		}
+	}
+	
+	func removeEventsWhenUserIsDeleted() {
+		
 	}
 	
 }

@@ -121,7 +121,7 @@ struct ProfileView: View {
 					.foregroundColor(Color.defaultGray)
 					.font(.system(size: 14))
 				if (!Auth.auth().currentUser!.isEmailVerified) {
-					Text("Du skal valider din email for at kunne oprette begivenheder")
+					Text("Du skal verifiser din email for at kunne oprette begivenheder")
 						.foregroundColor(Color.textColor)
 						.fontWeight(.bold)
 						.font(.system(size: 16))
@@ -225,6 +225,77 @@ struct ProfileView: View {
 										}
 									})
 							}
+						NavigationLink(
+							destination: SplashView(),
+						isActive: $loginShow) {
+								Text("Slet profil")
+								.foregroundColor(Color.red)
+									.font(.system(size: 16))
+									.fontWeight(.bold)
+									.onTapGesture(perform: {
+										let alertController = UIAlertController(title: "Bekræft, at du vil slette din konto", message: nil, preferredStyle: .alert)
+										
+										// Tilføj to tekstfelter for e-mail og kodeord
+										alertController.addTextField { (textField) in
+											textField.placeholder = "Kodeord"
+											textField.isSecureTextEntry = true
+										}
+										
+										// Opret handling for "Log ind" knappen
+										let loginAction = UIAlertAction(title: "Log ind", style: .default) { (_) in
+											// Hent tekst fra tekstfelterne
+											guard let password = alertController.textFields?[0].text else {
+												return
+											}
+											
+											let userId = Auth.auth().currentUser!.uid
+											let user = Auth.auth().currentUser
+											
+											let credential = EmailAuthProvider.credential(withEmail: Auth.auth().currentUser!.email!, password: password)
+
+											showSpinner {
+												user?.reauthenticate(with: credential, completion: { result, error in
+													if let error = error {
+														hideSpinner {
+															showMessagePrompt("Fejl: \(error.localizedDescription)")
+														}
+														return
+													} else {
+														userViewModel.deleteUser(id: userId, completion: { error in
+															if let error = error {
+																hideSpinner {
+																	showMessagePrompt("Fejl: \(error.localizedDescription)")
+																}
+																return
+															} else {
+																user?.delete { error in
+																	if let error = error {
+																		hideSpinner {
+																			showMessagePrompt("Fejl: \(error.localizedDescription)")
+																		}
+																	} else {
+																		hideSpinner {
+																			loginShow = true
+																		}
+																	}
+																}
+															}
+														})
+													}
+												})
+											}
+											
+										}
+										
+										// Tilføj handling til alert controlleren
+										alertController.addAction(loginAction)
+										
+										// Vis alert controlleren
+										if let vc = UIApplication.shared.windows.first?.rootViewController {
+											vc.present(alertController, animated: true, completion: nil)
+										}
+									})
+							}
 					}
 				}
 				.padding(.horizontal, 16)
@@ -232,6 +303,7 @@ struct ProfileView: View {
 				.frame(maxWidth: .infinity, alignment: .leading)
 		}
 	}
+
 	
 	struct PopupNotification: View {
 		@State private var notificationReminder = false
